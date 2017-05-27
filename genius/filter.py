@@ -1,7 +1,9 @@
+from genius import config
 import numpy as np
 import pandas as pd
 from nltk.stem import PorterStemmer
 from nltk.corpus import stopwords
+
 
 ps = PorterStemmer()
 
@@ -33,8 +35,17 @@ def get_sadness_ratio(lyrics):
     for word in stemmed_words:
         if word in sad_words:
             sad_count += 1
-    return float(sad_count)/len(stemmed_words)
+    return float(sad_count) / len(stemmed_words)
 
 
-print get_sadness_ratio(['absent', 'so', 'low', 'get', 'bad', 'kill', 'cry'])
-# filter_words()
+def get_lyrics(track_name):
+    pass
+
+
+def get_all_sadness(tracks):
+    all_sadness = []
+    for track in tracks:
+        lyrics = get_lyrics(track)
+        all_sadness.append(get_sadness_ratio(lyrics))
+
+    return np.array(all_sadness)

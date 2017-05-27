@@ -1,9 +1,8 @@
-from requests_oauthlib import OAuth2Session
-import authorise
 import requests
-import json
+import config
 
-
+api_key = config.last_fm_api_key
+shared_secret = config.last_fm_shared_secret
 redirect_uri = 'https://abhirame.github.io'
 
 

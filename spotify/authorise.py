@@ -1,8 +1,10 @@
 from requests_oauthlib import OAuth2Session
 import requests
 import json
+import config
 
-
+client_id = config.spotify_client_id
+client_secret = config.spotify_client_secret
 token_url = 'https://accounts.spotify.com/api/token'
 redirect_uri = 'https://abhirame.github.io'
 scope = ['user-top-read']

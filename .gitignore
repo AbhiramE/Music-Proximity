@@ -1,5 +1,8 @@
 access_tokens.txt 
 refresh_tokens.txt
+genius/config.py
+last_fm/config.py
+spotify/config.py
 .idea
 *.png
 *.pyc

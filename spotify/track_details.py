@@ -1,11 +1,12 @@
-from requests_oauthlib import OAuth2Session
-import authorise
-import requests
-import json
 import urllib
-import numpy as np
-import pandas
 
+import numpy as np
+import requests
+import config
+import authorise
+
+client_id = config.spotify_client_id
+token_url = 'https://accounts.spotify.com/api/token'
 scope = ['user-top-read']
 redirect_uri = 'https://abhirame.github.io'
 
