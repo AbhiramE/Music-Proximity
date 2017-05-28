@@ -1,9 +1,12 @@
+# coding=utf-8
 from genius import config
 import numpy as np
 import pandas as pd
 from nltk.stem import PorterStemmer
 from nltk.corpus import stopwords
-
+from BeautifulSoup import BeautifulSoup
+import requests
+import re
 
 ps = PorterStemmer()
 
@@ -22,9 +25,9 @@ def filter_words():
 
 def get_sadness_ratio(lyrics):
     filtered_words = [word for word in lyrics if word not in stopwords.words('english')]
-
+    print filtered_words
     # Read Sad Words
-    df = pd.read_csv('sad_words.csv')
+    df = pd.read_csv('/home/abhis3798/codebase/Projects/Sinder/genius/sad_words.csv')
     df = df.drop(df.columns[[0]], axis=1)
     sad_words = df.as_matrix().reshape(1, len(df))[0]
 
@@ -38,14 +41,34 @@ def get_sadness_ratio(lyrics):
     return float(sad_count) / len(stemmed_words)
 
 
-def get_lyrics(track_name):
-    pass
+def get_lyrics(track):
+    url = 'http://genius.com/'
+    track[0] = track[0].replace("-", "").replace('\xc3\xbc', 'u').replace("\xe2\x80\x99", "") \
+        .replace("'", "")
+    track[0] = ' '.join(track[0].split()).split("(")[0].rstrip('. ').replace(" ", "-")
+    track[1] = track[1].replace("-", "").replace('\xc3\xbc', 'u').replace("\xe2\x80\x99", "") \
+        .replace("'", "")
+    track[1] = ' '.join(track[1].split()).split("(")[0].rstrip('. ').replace(" ", "-")
+    url += track[1] + "-" + track[0] + "-" + "lyrics"
+    print url
+
+    page = requests.get(url)
+    lyrics = ""
+    if page.status_code == 200:
+        html = BeautifulSoup(page.text)
+        [h.extract() for h in html('script')]
+        for a in html.find("div", {"class": "lyrics"}).findAll("p")[0].findAll("a"):
+            lyrics += a.getText(separator=u' ').lower()
+    return lyrics
 
 
 def get_all_sadness(tracks):
     all_sadness = []
     for track in tracks:
         lyrics = get_lyrics(track)
-        all_sadness.append(get_sadness_ratio(lyrics))
-
+        words = lyrics.split(" ")
+        if lyrics != "":
+            all_sadness.append(get_sadness_ratio(words))
+        else:
+            all_sadness.append(0)
     return np.array(all_sadness)

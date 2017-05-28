@@ -1,3 +1,4 @@
+# coding=utf-8
 import urllib
 
 import numpy as np
@@ -48,15 +49,16 @@ def get_track_info(track_names):
     track_ids = []
     print track_names
     for track_name in track_names:
-        name = track_name[0].split('(')[0]
+        name = track_name[0].split('(')[0].replace('\'', '').replace('\"', "").replace('’', '')
         params = {
             'q': urllib.quote_plus(name),
             'type': 'track'
         }
         results = requests.get(url=url, params=params).json()['tracks']['items']
         if len(results) > 0:
-            print name
             track_ids.append(results[0]['id'])
+        else:
+            print name
     return track_ids
 
 
@@ -71,6 +73,7 @@ def get_audio_features(track_ids):
         refresh_token()
         get_audio_features(track_ids)
 
+    print response.json()
     track_features = []
     tracks = response.json()['audio_features']
 

@@ -1,5 +1,6 @@
 from requests_oauthlib import OAuth2Session
 import requests
+import base64
 import json
 import config
 
@@ -31,9 +32,9 @@ def refresh_token(access_token, refresh_token):
     print access_token
 
     data = {'grant_type': 'refresh_token',
-              'refresh_token': refresh_token}
+            'refresh_token': refresh_token}
     url = 'https://accounts.spotify.com/api/token'
-    response = requests.post(url=url, headers={'Authorization': 'Basic '+access_token}, data=data).json()
-    print response
+    encoded = base64.b64encode(bytes(client_id + ":" + client_secret))
+    response = requests.post(url=url, headers={'Authorization': 'Basic ' + encoded}, data=data).json()
     with open('access_tokens.txt', 'w') as f:
         f.write(response['access_token'])
