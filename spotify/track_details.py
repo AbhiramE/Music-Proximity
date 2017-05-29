@@ -47,6 +47,7 @@ def get_user_info():
 def get_track_info(track_names):
     url = 'https://api.spotify.com/v1/search'
     track_ids = []
+    refresh_token()
     print track_names
     for track_name in track_names:
         name = track_name[0].split('(')[0].replace('\'', '').replace('\"', "").replace('’', '')
@@ -54,11 +55,17 @@ def get_track_info(track_names):
             'q': urllib.quote_plus(name),
             'type': 'track'
         }
-        results = requests.get(url=url, params=params).json()['tracks']['items']
-        if len(results) > 0:
-            track_ids.append(results[0]['id'])
+        response = requests.get(url=url,
+                                headers={'Authorization': 'Bearer ' + get_access_token()},
+                                params=params)
+        if response.status_code == 200:
+            results = response.json()['tracks']['items']
+            if len(results) > 0:
+                track_ids.append(results[0]['id'])
+            else:
+                print name
         else:
-            print name
+            raise Exception("Failed", response.status_code, response.text)
     return track_ids
 
 
@@ -79,6 +86,6 @@ def get_audio_features(track_ids):
 
     for track in tracks:
         track_features.append(np.array([track['danceability'], track['energy'], track['acousticness'],
-                                        track['valence']]))
+                                        track['valence'], track['duration_ms']]))
 
     return np.array(track_features)

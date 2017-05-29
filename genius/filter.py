@@ -68,7 +68,7 @@ def get_all_sadness(tracks):
         lyrics = get_lyrics(track)
         words = lyrics.split(" ")
         if lyrics != "":
-            all_sadness.append(get_sadness_ratio(words))
+            all_sadness.append(np.array([get_sadness_ratio(words), len(lyrics)]))
         else:
-            all_sadness.append(0)
+            all_sadness.append(np.array([0, len(lyrics)]))
     return np.array(all_sadness)
